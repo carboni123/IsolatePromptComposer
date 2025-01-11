@@ -1,0 +1,30 @@
+{
+    "actions": [
+        {
+            "action": "create_file",
+            "file_path": "example.txt",
+            "file_contents": "This is an example file.",
+            "metadata": {
+                "commit_message": "Initial creation of example.txt",
+                "author": "Alice"
+            }
+        },
+        {
+            "action": "edit_file",
+            "file_path": "example.txt",
+            "file_contents": "Updated contents of the example file.",
+            "metadata": {
+                "commit_message": "Updated example.txt",
+                "author": "Alice"
+            }
+        },
+        {
+            "action": "delete_file",
+            "file_path": "example.txt",
+            "metadata": {
+                "commit_message": "Removed example.txt",
+                "author": "Alice"
+            }
+        }
+    ]
+}
