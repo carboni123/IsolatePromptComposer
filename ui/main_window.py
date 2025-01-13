@@ -32,6 +32,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.project_data = {}
         self.ignore_patterns = []
+        self.output_type = "xml"
 
         self.button_actions()  
         self.toolbar_actions()
@@ -50,6 +51,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.actionAbout_PySide.triggered.connect(show_about_pyside)
         self.actionAbout_Google_AI_Studio.triggered.connect(show_about_googleaistudio)
         self.actionMute_Warnings.triggered.connect(lambda: self.warning_message.mute(self.actionMute_Warnings.isChecked()))
+        self.actionXML_JSON_Formatting.triggered.connect(self.toggle_output_format)
 
     def button_actions(self):
         self.compile_button.clicked.connect(self.compile_prompt)
@@ -81,6 +83,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def load_from_combobox(self, folder: str, combobox, text_edit):
         self.file_handler.load_from_combobox(folder, combobox, text_edit)
+
+
+    def toggle_output_format(self):
+        if self.actionXML_JSON_Formatting.isChecked():
+            self.output_type = "json"
+        else:
+            self.output_type = "xml"
 
     def new_project(self, silent: bool = False):
         """Clears all text fields, the tree view, and the compiled prompt.

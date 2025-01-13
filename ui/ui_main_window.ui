@@ -716,6 +716,7 @@
     </property>
     <addaction name="actionLine_Enumerator"/>
     <addaction name="actionMute_Warnings"/>
+    <addaction name="actionXML_JSON_Formatting"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
@@ -774,6 +775,14 @@
   <action name="actionAbout_Google_AI_Studio">
    <property name="text">
     <string>About Google AI Studio</string>
+   </property>
+  </action>
+  <action name="actionXML_JSON_Formatting">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>XML-JSON Formatting</string>
    </property>
   </action>
  </widget>
