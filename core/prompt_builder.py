@@ -250,7 +250,7 @@ class PromptBuilder:
         # Join all parts into the final prompt
         final_prompt = "\n".join(prompt_parts)
         # Wrap all prompt parts in a root <prompts> element
-        final_prompt = f"<prompts>\n{'\n'.join(prompt_parts)}\n</prompts>"
+        final_prompt = f"<prompts>\n{final_prompt}\n</prompts>"
         # Copy to clipboard
         QApplication.clipboard().setText(final_prompt)
         # Show warning message
