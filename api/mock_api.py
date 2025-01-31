@@ -1,7 +1,10 @@
 # api/mock_api.py
 from api.api import API
+from api import register_api
 import asyncio
 
+
+@register_api("mock")
 class MockAPI(API):
     """
     Mock implementation of the API class for testing without real API calls.
@@ -25,25 +28,15 @@ class MockAPI(API):
         :return: The mocked response (either a review or a book).
         """
         try:
-            if "<reviewer_prompt>" in prompt:
-                # Simulate reviewer response
-                with open("mock/review.txt", "r", encoding="utf-8") as file:
-                    return file.read()
-
-            if "<writer_prompt>" in prompt:
-                # Simulate writer response
-                with open("mock/book.txt", "r", encoding="utf-8") as file:
-                    return file.read()
-
+            response = "The capital of France is **Paris**. Known for its rich history, iconic landmarks such as the Eiffel Tower, and vibrant culture, Paris is one of the most famous cities in the world."
             # Default behavior: echo the prompt
-            return f"Mock response for prompt: {prompt}"
-        except FileNotFoundError as e:
-            return f"Error: {e}. Ensure the necessary mock files (review.txt, book.txt) exist."
+            return f"Mock response for prompt {prompt}: {response}"
         except Exception as e:
             return f"An unexpected error occurred: {e}"
+
 
 if __name__ == "__main__":
     # Example usage of MockAPI
     api = MockAPI("google_api.key")
-    response = asyncio.run(api.generate_text("<reviewer_prompt>Sample review text"))
+    response = asyncio.run(api.generate_text("What is the capital of Paris?"))
     print(response)

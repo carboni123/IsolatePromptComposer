@@ -6,3 +6,4 @@ __pycache__
 LICENSE
 *.key
 *.ui
+node_modules

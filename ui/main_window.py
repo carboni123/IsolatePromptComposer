@@ -32,15 +32,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
         self.project_data = {}
         self.ignore_patterns = []
+        self.loaded_ignore = ""
         self.output_type = "xml"
 
         self.button_actions()  
         self.toolbar_actions()
         self.setup_tree_view()
-        self.load_default_ignore(silent=True)
         self.populate_comboboxes()
         self.le_search.hide() # Not implemented
-        self.label_api.mousePressEvent = self.load_api_key # Set the mouse event
+        self.pb_thoughts.hide() # Not implemented
+        # self.label_api.mousePressEvent = self.load_api_key # Set the mouse event
 
     def toolbar_actions(self):
         self.actionNew_Project.triggered.connect(self.new_project)
@@ -112,7 +113,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.label_token_count.setText("Tokens: 0")
             self.label_line_count.setText("Lines: 0")
             # Reset Api key
-            self.label_api.setText("API Key: Click to load")
+            # self.label_api.setText("API Key: Click to load")
             self.api_key_path = ""
             self.project_data = {}
 
@@ -130,8 +131,13 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def load_default_ignore(self, silent=False):
         project_path = self.project_path_lineedit.text().strip()
+        if self.loaded_ignore:
+            # Uses the saved value when you load with Add Filter
+            self.ignore_patterns = self.file_handler.load_default_ignore(self.loaded_ignore, silent)
+        else:
+            # Uses the .ignore file in the IsolatePromptComposer folder as default
+            self.ignore_patterns = self.file_handler.load_default_ignore(os.getcwd(), silent=True)
         if project_path:
-            self.ignore_patterns = self.file_handler.load_default_ignore(project_path, silent)
             self.list_project_content(project_path)
 
     def list_project_content(self, folder_path: str):
@@ -142,6 +148,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         if file_path:
             self.ignore_patterns = self.file_handler.load_ignore(file_path)
             self.list_project_content(self.project_path_lineedit.text())
+            self.loaded_ignore = os.path.dirname(file_path) # ignore dir
 
     def copy_file_tree_to_tab(self):
         project_path = self.project_path_lineedit.text().strip()
@@ -201,16 +208,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         with open(file_path, "r", encoding="utf-8") as f:
             return f.read().strip()
 
-    def load_api_key(self, event):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Load API Key", "", "API Key Files (*.key);;All Files (*.*)")
-        if file_path:
-            try:
-                self.llm_handler.load_api_key(file_path)
-                self.api_key_path = file_path
-                self.label_api.setText(f"API Key: {os.path.basename(file_path)}")
-                self.warning_message.message_box("Success", "API Key loaded successfully.")
-            except Exception as e:
-                self.warning_message.message_box("Error", f"Error loading API Key: {e}")
+    # def load_api_key(self, event):
+    #     file_path, _ = QFileDialog.getOpenFileName(self, "Load API Key", "", "API Key Files (*.key);;All Files (*.*)")
+    #     if file_path:
+    #         try:
+    #             self.llm_handler.load_api_key(file_path)
+    #             self.api_key_path = file_path
+    #             self.label_api.setText(f"API Key: {os.path.basename(file_path)}")
+    #             self.warning_message.message_box("Success", "API Key loaded successfully.")
+    #         except Exception as e:
+    #             self.warning_message.message_box("Error", f"Error loading API Key: {e}")
 
     def refresh_file_tree(self):
         self.load_default_ignore(silent=True)
@@ -226,11 +233,16 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         structure_data = self.load_file_content("core/agents/enhance_input/structure.md")
         if not user_input or not role_data or not structure_data:
             self.warning_message.message_box("Warning", "Please fill the required fields before calling the API")
-            return       
-        if self.api_key_path == "":
-            self.warning_message.message_box("Warning", "Please load the API key before calling the API")
-            return    
+            return         
         try:
+            # Load the LLM API
+            selected_api = self.cb_api.currentText()
+            if "Choose" in selected_api:
+                self.warning_message.message_box("Warning", "Please select the API")
+                return
+            else:
+                if not self.llm_handler.load_api_key(api=selected_api, key=self.api_key_path): # Load api key from path
+                    return
             # Call the LLM API
             self.warning_message.message_box("Info", "Calling the LLM API, please wait")
             thought_process, response = self.llm_handler.call_api(user_input, role_data, structure_data)

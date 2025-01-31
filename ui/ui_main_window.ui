@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1080</width>
+    <width>1280</width>
     <height>720</height>
    </rect>
   </property>
@@ -153,10 +153,44 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="label_api">
-        <property name="text">
-         <string>API Key: Click to load</string>
+       <widget class="QComboBox" name="cb_api">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
+        <property name="minimumSize">
+         <size>
+          <width>150</width>
+          <height>0</height>
+         </size>
+        </property>
+        <item>
+         <property name="text">
+          <string>Choose API...</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>openai</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>google</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>deepseek</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>alibaba-qwen</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
@@ -326,6 +360,33 @@
                   <widget class="QPushButton" name="pb_enhance">
                    <property name="text">
                     <string>Enhance Prompt</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_thinking">
+           <attribute name="title">
+            <string>Thinking Prompt</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_14">
+            <item>
+             <widget class="QWidget" name="widget_8" native="true">
+              <layout class="QVBoxLayout" name="verticalLayout_13">
+               <item>
+                <widget class="QPlainTextEdit" name="tedit_tab_toughts"/>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_13">
+                 <item>
+                  <widget class="QPushButton" name="pb_thoughts">
+                   <property name="text">
+                    <string>Request Thoughts</string>
                    </property>
                   </widget>
                  </item>
@@ -689,7 +750,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1080</width>
+     <width>1280</width>
      <height>21</height>
     </rect>
    </property>

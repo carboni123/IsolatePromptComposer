@@ -1,47 +1,48 @@
-# api/openai_api.py
+# api/alibaba_qwen_api.py
 import asyncio
 from api.api import API
 from api import register_api
 from openai import OpenAI
 
 
-@register_api("openai")
-class OpenAIAPI(API):
+@register_api("alibaba-qwen")
+class AlibabaQwenAPI(API):
     """
     Concrete class for interactions with the OpenAI API.
     """
 
     def __init__(self, api_key=None):
         """
-        Initializes the OpenAI API object.
+        Initializes the AlibabaQwen API object.
 
         :param api_key: Can be either an actual API key string or
                         a path to a file containing the API key.
         """
-        super().__init__(api_key, api_env="OPENAI_API_KEY")
-        self.client = OpenAI(api_key=self.api_key)
+        super().__init__(api_key, api_env="ALIBABA_API_KEY")
+        self.api_url = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+        self.client = OpenAI(api_key=self.api_key, base_url=self.api_url)
         # If we don’t have a key or a client, raise an error.
         if not self.api_key or not self.client:
             raise ValueError(
-                "No valid OpenAI API key found. Provide it as a string, file path, "
-                "or set OPENAI_API_KEY in the environment."
+                "No valid Alibaba Qwen API key found. Provide it as a string, file path, "
+                "or set ALIBABA_API_KEY in the environment."
             )
 
     async def generate_text(
         self,
         prompt,
-        model="chatgpt-4o-latest",
+        model="qwen-max-2025-01-25",
         max_tokens=8192,
         temperature=1.0,
         timeout=10,
         **kwargs,
     ):
         """
-        Generates text using the OpenAI API.
+        Generates text using the AlibabaQwen API.
 
         Args:
             prompt (str): The input prompt for text generation.
-            model (str): The OpenAI model to use.
+            model (str): The Qwen model to use.
             max_tokens (int): The maximum number of tokens for the generated text.
             temperature (float): The sampling temperature.
             timeout (int): Timeout in seconds for the API call.
@@ -87,6 +88,6 @@ class OpenAIAPI(API):
 
 if __name__ == "__main__":
     # Example: Supply a path to a file containing your key,
-    # or just ensure OPENAI_API_KEY is set in your environment.
-    api = OpenAIAPI("openai_api.key")
+    # or just ensure ALIBABA_API_KEY is set in your environment.
+    api = AlibabaQwenAPI()
     api.test_api()

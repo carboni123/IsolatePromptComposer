@@ -1,7 +1,7 @@
 # core/llm_handler.py
 import json
 from datetime import datetime
-from api.google_api import GoogleAPI
+from api import create_api_instance
 import re
 import asyncio
 
@@ -12,16 +12,32 @@ class LLMHandler:
         self.MODEL_NAME = "models/gemini-2.0-flash-thinking-exp"
         self.enable_logging = True
         self.api = None
+        self.current_api = ""
+        self.available_apis = ["deepseek", "openai", "google", "alibaba-qwen", "mock"]
 
-    def load_api_key(self, key:str):
+    def load_api_key(self, api:str, key:str):
+        if self.api and api == self.current_api:
+            return
+        
+        if api not in self.available_apis:
+            self.warning_message.message_box("Error", f"Unknown API")
+            return
         # Define constants
         try:
-            self.api = GoogleAPI(key)
+            self.api = create_api_instance(api, api_key=key)
+            self.current_api = api
         except FileNotFoundError:
+            self.api = None
+            self.current_api = ""
             self.warning_message.message_box("Error", f"API key file '{key}' not found. Please create this file with your API key.")
+            return False
         except Exception as e:
+            self.api = None
+            self.current_api = ""
             self.warning_message.message_box("Error", f"Error reading API key file: {e}")
-
+            return False
+        
+        return True
     # Utility function to output
     def save_output(self, data, out_file):
          if self.enable_logging:

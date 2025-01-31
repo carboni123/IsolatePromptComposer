@@ -1,9 +1,11 @@
 # api/deepseek_api.py
 import asyncio
 from api.api import API
+from api import register_api
 from openai import OpenAI
 
 
+@register_api("deepseek")
 class DeepSeekAPI(API):
     """
     Concrete class for interactions with the DeepSeek API.

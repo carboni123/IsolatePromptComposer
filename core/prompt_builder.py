@@ -243,9 +243,9 @@ class PromptBuilder:
                 # Get and clean text
                 text_content = text_edit.toPlainText().strip()
                 if text_content:  # Only include non-empty prompts
-                    # Format the prompt part with <content> and add to list
+                    # Format the prompt part and add to list
                     prompt_parts.append(
-                        f'<prompt type="{tab_text}">\n<content>\n{text_content}\n</content>\n</prompt>'
+                        f'<prompt type="{tab_text}">\n{text_content}\n</prompt>'
                     )
         # Join all parts into the final prompt
         final_prompt = "\n".join(prompt_parts)

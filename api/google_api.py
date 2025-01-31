@@ -2,9 +2,10 @@
 import os
 import re
 from api.api import API
+from api import register_api
 import google.generativeai as genai
 
-
+@register_api("google")
 class GoogleAPI(API):
     """
     Concrete class for interactions with the Google API.
@@ -47,7 +48,6 @@ class GoogleAPI(API):
             response = model.generate_content(prompt)
             return extract_xml_from_markdown(response.text)
         except Exception as e:
-            self.log_output({"error": str(e)}, self.LOG_FILE)
             print(f"Error generating text with Google API: {e}")
             raise
 
