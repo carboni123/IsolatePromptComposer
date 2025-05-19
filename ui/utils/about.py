@@ -25,7 +25,7 @@ def show_about_info():
         A tool for composing structured prompts for Large Language Models.
         <br>
         <br>
-        Version: 0.1
+        Version: 0.2
         <br>
         <br>
         2025 - Diego Carboni
