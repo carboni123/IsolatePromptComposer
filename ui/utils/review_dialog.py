@@ -16,4 +16,4 @@ class ReviewDialog(QDialog, Ui_ReviewDialog):
         self.close()
     
     def get_accepted(self):
-         return self.accepted
+        return self.accepted

@@ -16,8 +16,10 @@ class LLMHandler:
         self.available_apis = ["deepseek", "openai", "google", "alibaba-qwen", "mock"]
 
     def load_api_key(self, api:str, key:str):
+        # If the requested API is already loaded successfully, simply
+        # acknowledge by returning True so callers know they can proceed.
         if self.api and api == self.current_api:
-            return
+            return True
         
         if api not in self.available_apis:
             self.warning_message.message_box("Error", f"Unknown API")
