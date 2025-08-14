@@ -33,7 +33,6 @@ class PromptBuilder:
             if text_edits:
                 text_edit = text_edits[0]
                 text_edit.clear()
-        self.main_window.output_format_textedit.clear()
         self.main_window.plainTextEdit_12.clear()
 
     # This method is no longer directly called by MainWindow for populating tedit_tab5.
@@ -140,22 +139,28 @@ class PromptBuilder:
 
     def compile_prompt(self):
         prompt_parts = []
-        current_tab_widget = self.main_window.prompt_tab.currentWidget()
-        current_tab_name = self.main_window.prompt_tab.tabText(self.main_window.prompt_tab.currentIndex())
-
-
         for i in range(self.main_window.prompt_tab.count()):
             tab_text = self.main_window.prompt_tab.tabText(i)
             tab_widget = self.main_window.prompt_tab.widget(i)
+
+            if tab_text == "Patch Comparison":
+                if self.main_window.patches:
+                    patches_xml = "\n".join(
+                        f"<patch_{idx}>{patch}</patch_{idx}>" for idx, patch in enumerate(self.main_window.patches, 1)
+                    )
+                    patch_prompt = (
+                        "Given the following patches, make a comparison and select the best version. "
+                        "If there is a mix of ideas between patches, suggest tasks to further refine the best patch\n"
+                        f"{patches_xml}"
+                    )
+                    prompt_parts.append(f'<prompt type="{tab_text}">\n{patch_prompt}\n</prompt>')
+                continue
 
             text_edits = tab_widget.findChildren(QPlainTextEdit)
             if text_edits:
                 text_edit = text_edits[0]
                 text_content = text_edit.toPlainText().strip()
                 if text_content:
-                    # Special handling for "Files" tab if it's part of the compiled prompt.
-                    # Current logic assumes tedit_tab5 (Files tab) content is directly used.
-                    # This is consistent with rebuilding tedit_tab5 from files_added_to_files_tab.
                     prompt_parts.append(f'<prompt type="{tab_text}">\n{text_content}\n</prompt>')
         
         final_prompt = "\n".join(prompt_parts)

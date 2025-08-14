@@ -34,6 +34,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.api_key_path = ""
         self.output_type = "xml"
         self.files_added_to_files_tab = set()  # Master set of normalized absolute paths for tedit_tab5
+        self.patches = []
 
         self.project_data = {}
         self.ignore_patterns = []
@@ -82,16 +83,10 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.pb_tab2_load_example.clicked.connect(
             lambda: self.load_from_combobox("role_prompts", self.cb_tab2_load_example, self.tedit_tab2)
         )
-        # Connect the combo box and push button for constraint prompts tab
-        self.pb_tab3_load_example.clicked.connect(
-            lambda: self.load_from_combobox("constraint_prompts", self.cb_tab3_load_example, self.tedit_tab3)
-        )
-        # Connect the combo box and push button for output format tab
-        self.pb_tab_output_load_example.clicked.connect(
-            lambda: self.load_from_combobox(
-                "structured_output", self.cb_tab_output_load_example, self.output_format_textedit
-            )
-        )
+
+        self.pb_add_patch.clicked.connect(self.add_patch)
+        self.pb_remove_patch.clicked.connect(self.remove_selected_patch)
+        self.patch_list.itemDoubleClicked.connect(self.preview_patch)
 
     def clear_files_tab_and_selection(self):
         """Clears the master set of files for the 'Files' tab and updates the UI."""
@@ -108,8 +103,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             
     def populate_comboboxes(self):
         populate_comboboxes(self, "data/role_prompts", self.cb_tab2_load_example)
-        populate_comboboxes(self, "data/constraint_prompts", self.cb_tab3_load_example)
-        populate_comboboxes(self, "data/structured_output", self.cb_tab_output_load_example)
 
     def load_from_combobox(self, folder: str, combobox, text_edit):
         self.file_handler.load_from_combobox(folder, combobox, text_edit)
@@ -144,7 +137,29 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.api_key_path = ""
             self.project_data = {}
             self.files_added_to_files_tab.clear()
+            self.patches.clear()
+            self.patch_list.clear()
             # tedit_tab5 is already cleared by prompt_builder.clear_all_text_fields()
+
+    def add_patch(self):
+        patch_text = self.patch_input.toPlainText().strip()
+        if patch_text:
+            self.patches.append(patch_text)
+            self.patch_list.addItem(f"Patch {len(self.patches)}")
+            self.patch_input.clear()
+
+    def preview_patch(self, item):
+        index = self.patch_list.row(item)
+        if 0 <= index < len(self.patches):
+            QMessageBox.information(self, f"Patch {index + 1}", self.patches[index])
+
+    def remove_selected_patch(self):
+        row = self.patch_list.currentRow()
+        if row >= 0:
+            self.patches.pop(row)
+            self.patch_list.takeItem(row)
+            for i in range(self.patch_list.count()):
+                self.patch_list.item(i).setText(f"Patch {i + 1}")
 
     def choose_directory(self, line_edit):
         selected_folder = QFileDialog.getExistingDirectory(self, "Select Folder")
